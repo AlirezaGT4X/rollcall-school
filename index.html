@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ثبت غیبت</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <div class="container">
+        <h1>حضور و غیاب مدرسه شهید بهشتی</h1>
+        <input type="text" id="studentName" placeholder="نام دانش‌آموز" autocomplete="off">
+        <div id="select">
+            <select id="class">
+                <option value="class701">کلاس 701</option>
+                <option value="class702">کلاس 702</option>
+                <option value="class801">کلاس 801</option>
+                <option value="class802">کلاس 802</option>
+                <option value="class901">کلاس 901</option>
+                <option value="class902">کلاس 902</option>
+            </select>
+        </div>
+        <button onclick="registerAbsence()" id="register">ثبت غیبت</button>
+        <div id="absenceList"></div>
+        <br>
+        <label>برای پاک کردن غیبت ها رمز عبور را وارد کنید :</label>
+        <input type="password" id="adminPassword" placeholder="رمز عبور">
+        <button onclick="clearAbsences()"class="delete">پاک کردن غیبت‌ها</button>
+    </div>
+    <script>
+        function registerAbsence() {
+            const name = document.getElementById('studentName').value;
+            const className = document.getElementById('class').value;
+            fetch('register.php?name=' + name + '&class=' + className)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('absenceList').innerHTML = data;
+                    alert('غیبت ' + name + ' با موفقیت ثبت شد.');
+                    location.reload(); // رفرش صفحه پس از ثبت غیبت
+                });
+        }
+
+        function clearAbsences() {
+            const password = document.getElementById('adminPassword').value;
+            fetch('clear.php?password=' + password)
+                .then(response => response.text())
+                .then(data => {
+                    alert(data);
+                    document.getElementById('absenceList').innerHTML = '';
+                    document.getElementById('adminPassword').value = ''; // پاک کردن محتوای تکست باکس رمز عبور
+                    showAllAbsences();
+                });
+        }
+        function showAllAbsences() {
+            fetch('register.php?show_all=true')
+                .then(response => response
+                    .text())
+                .then(data => {
+                    document.getElementById('absenceList').innerHTML = data;
+                });
+        }
+        document.addEventListener('DOMContentLoaded', showAllAbsences);
+    </script>
+</body>
+
+</html>
